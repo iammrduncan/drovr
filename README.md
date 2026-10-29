@@ -41,3 +41,5 @@ Design phase. No service and no web app are implemented yet.
 - [Proposed design](docs/plan-proposed.md), including where it differs from the plan.
 - [OpenDuet review](docs/openduet-review.md): why drovr borrows a few product ideas from [OpenDuet](https://github.com/CopilotKit/OpenDuet) and does not build on it.
 - [OpenDuet takeaways](docs/plan-duet-takeaways.md): the working notes behind that review.
+- [OpenBot review](docs/openbot-review.md): the platform under OpenDuet, and the one webhook rule drovr takes from it.
+- [OpenDots review](docs/opendots-review.md): the text, call, and Slack template, and why drovr does not build on it.
