@@ -43,3 +43,5 @@ Design phase. No service and no web app are implemented yet.
 - [OpenDuet takeaways](docs/plan-duet-takeaways.md): the working notes behind that review.
 - [OpenBot review](docs/openbot-review.md): the platform under OpenDuet, and the one webhook rule drovr takes from it.
 - [OpenDots review](docs/opendots-review.md): the text, call, and Slack template, and why drovr does not build on it.
+- [Claude review](docs/claude-review.md): a second review of all of the above, with herdr 0.9.5 source re-checked and the defects in the proposed design.
+- [Claude proposal](docs/claude-proposed.md): an alternative design with explicit replies, worktree workspaces, harness-native permissions, and one trigger primitive.
