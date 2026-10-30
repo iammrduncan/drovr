@@ -1,8 +1,12 @@
 # MVP implementation plan
 
-Build [plan-final.md](../plan-final.md), with the ten bounded goals below. The repository currently contains design documents only. Every goal is **planned**, and none of the implementation or live acceptance checks below has run.
+Build [plan-final.md](../research/plan-final.md), with the ten bounded goals below. The repository currently contains design documents only. Every goal is **planned**, and none of the implementation or live acceptance checks below has run.
 
 This directory translates the final design into work. Earlier proposals are historical references, not additional requirements. [Shared contracts](contracts.md) resolve a few contradictions that would otherwise create different implementations of the same feature. They retain profiles-only addressing, two nonblocking agent tools, and one trigger mechanism.
+
+The [profile design](profiles.md) makes creation, definition storage, harness-specific application, and session updates concrete. It adds a thin Name + Harness creation form and generated-file preview inside the existing profile/API/PWA goals; it does not add another goal or a general profile designer.
+
+The [profile comparison](../research/profile-models.md) reviews implemented and planned approaches in Magnesium, Magnesium v2, Fuse, and dBrain, with the lessons carried into the existing profile checkpoints.
 
 ## Ship this
 

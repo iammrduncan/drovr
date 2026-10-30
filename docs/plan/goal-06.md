@@ -1,5 +1,89 @@
 # 06 — Deliver once, recover honestly
 
+**Show me — planned slice**
+
+**Durable facts and external effects have different owners**
+
+```text
+SQLite
+  admitted messages + attempt history + active message + durable pause
+one serialized dispatcher per profile
+  selection, validation, atomic claim, and submission classification
+herdr boundary
+  one external prompt write + verified runtime/readiness observations
+native harness
+  executes work; explicitly calls reply when it chooses to answer
+owner recovery
+  Stop / Resume / Retry / Cancel through the same operation guards
+```
+
+**Commit the journal before crossing the prompt boundary**
+
+```mermaid
+sequenceDiagram
+  participant D as Dispatcher
+  participant DB as SQLite
+  participant H as herdr
+  D->>D: Recheck binding, approval, readiness, pause, debounce, and limits
+  D->>DB: Atomically claim active message and insert prepared attempt
+  DB-->>D: Commit completes
+  D->>H: Submit one prompt for this attempt
+  alt Conclusive acknowledgment
+    H-->>D: Submission acknowledged
+    D->>DB: submitted; retain stable submission time and baseline
+  else Ambiguous write or lost acknowledgment
+    D->>DB: delivery_unknown; hold automatic scheduling
+    Note over D,H: No automatic replay after crash/reconnect
+  end
+```
+
+**Readiness releases a slot; it does not certify an answer**
+
+```text
+select: eligible replies → owner sends → profile sends → triggers
+  oldest numeric id within class; ordinary selection excludes all attempted rows
+hold if busy / blocked / unknown / launching / paused, or debounce not met
+recovered prepared attempt without conclusive acknowledgment → delivery_unknown
+submitted + comparable later ready observation on the matched runtime
+  → close attempt and release the active scheduling slot
+  → do not label the task successful or invent a semantic reply
+missing ordinary reply → remains missing; no automatic follow-up notice/prompt
+exact-id reply → record message-specific reception evidence
+  after retries, it cannot identify which copy ran or settle a newer unknown write
+lost runtime continuity → recovery, never compare unrelated sequence numbers
+```
+
+**Owner actions preserve uncertainty rather than hiding it**
+
+```text
+Stop
+  commit pause + new generation → cancel eligible queued work → interrupt
+  retain in-flight evidence; incoming work is held; late old-generation checks drop
+Resume
+  reconcile first → schedule allowed work from now; no paused-tick catch-up
+  unknown delivery still needs recovery; Resume does not reload profile config
+Retry(message id, action key)
+  wait until no write is still issued; retire old scheduling claim, keep history
+  same message id + one new attempt; repeated action key adds no extra attempt
+Cancel(message id)
+  prevent future submission; clear active slot once no write is in flight
+  keep old effects uncertain and late replies as history without another wake
+```
+
+**Observable recovery example and owner checkpoint**
+
+```diff
+ # Cancel m42 after an unknown delivery and after its write has finished:
+ attempt 1: delivery_unknown             # retained historical evidence
+-active message: m42
+-future submission: held for recovery
++active message: none
++future submission: cancelled
+ # Cancellation does not prove the native harness did nothing.
+```
+
+At handoff, exchange a real builder/reviewer question and explicit reply; repeat its request key, Stop/restart/Resume reviewer, and inspect a controlled lost-acknowledgment case with Retry versus Cancel. The thread, attempt history, `pending`, and both panes must agree. Use feedback to clarify queued/submitted/unknown before adding HTTP.
+
 **Status:** planned. **Depends on:** [05](goal-05.md).
 
 ## Outcome
@@ -33,7 +117,7 @@ No exactly-once execution claim, text-presence retry heuristic, transcript reade
 
 ## Handoff
 
-This is the first usable CLI product slice. [07](goal-07.md) exposes it without a second implementation. Keep the fault-injection tools for [10](goal-10.md), rather than recreating failure tests at release.
+This is the first end-to-end CLI messaging slice. [07](goal-07.md) exposes it without a second implementation. Keep the fault-injection tools for [10](goal-10.md), rather than recreating failure tests at release.
 
 ## Try it and give feedback
 

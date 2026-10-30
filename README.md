@@ -32,19 +32,22 @@ drovr is a client of that API. It stores profiles, materializes them into a work
 
 ## Status
 
-Design phase. The current plan is [docs/plan-final.md](docs/plan-final.md). No service and no web app are implemented yet.
+Design phase. The current plan is [docs/research/plan-final.md](docs/research/plan-final.md). No service and no web app are implemented yet.
 
 ## Documents
 
-- [Final plan](docs/plan-final.md), the current plan. Build from this.
-- [Original plan](docs/plan-original.md), kept as it was written.
-- [Review](docs/plan-review.md) of that plan against current herdr, the three harnesses, Collie, and the earlier profile work.
-- [Proposed design](docs/plan-proposed.md), including where it differs from the plan.
-- [OpenDuet review](docs/openduet-review.md): why drovr borrows a few product ideas from [OpenDuet](https://github.com/CopilotKit/OpenDuet) and does not build on it.
-- [OpenDuet takeaways](docs/plan-duet-takeaways.md): the working notes behind that review.
-- [OpenBot review](docs/openbot-review.md): the platform under OpenDuet, and the one webhook rule drovr takes from it.
-- [OpenDots review](docs/opendots-review.md): the text, call, and Slack template, and why drovr does not build on it.
-- [Claude review](docs/claude-review.md): a second review of all of the above, with herdr source re-checked and the defects in the proposed design.
-- [Claude proposal](docs/claude-proposed.md): an alternative design with explicit replies, worktree workspaces, harness-native permissions, and one trigger primitive. The final plan uses this as its base.
-- [Codex review](docs/codex-review.md): a review of the Claude proposal and the earlier plans, focused on delivery, Stop, and limits.
-- [Codex proposal](docs/codex-proposed.md): the delivery journal, request ids, pause-on-Stop, and the depth, fan-out, and rate limits. The final plan takes those guards.
+- [Profile design](docs/plan/profiles.md): creation, definition files, native harness layouts, editing, and hub session lifecycle.
+- [Profile comparisons](docs/research/profile-models.md): lessons from Magnesium, Magnesium v2, Fuse, and dBrain, distinguishing implemented behavior from plans.
+- [MVP implementation plan](docs/plan/README.md): ten bounded goals, each ending with a hands-on feedback checkpoint.
+- [Final plan](docs/research/plan-final.md), the current plan. Build from this.
+- [Original plan](docs/research/plan-original.md), kept as it was written.
+- [Review](docs/research/plan-review.md) of that plan against current herdr, the three harnesses, Collie, and the earlier profile work.
+- [Proposed design](docs/research/plan-proposed.md), including where it differs from the plan.
+- [OpenDuet review](docs/research/openduet-review.md): why drovr borrows a few product ideas from [OpenDuet](https://github.com/CopilotKit/OpenDuet) and does not build on it.
+- [OpenDuet takeaways](docs/research/plan-duet-takeaways.md): the working notes behind that review.
+- [OpenBot review](docs/research/openbot-review.md): the platform under OpenDuet, and the one webhook rule drovr takes from it.
+- [OpenDots review](docs/research/opendots-review.md): the text, call, and Slack template, and why drovr does not build on it.
+- [Claude review](docs/research/claude-review.md): a second review of all of the above, with herdr source re-checked and the defects in the proposed design.
+- [Claude proposal](docs/research/claude-proposed.md): an alternative design with explicit replies, worktree workspaces, harness-native permissions, and one trigger primitive. The final plan uses this as its base.
+- [Codex review](docs/research/codex-review.md): a review of the Claude proposal and the earlier plans, focused on delivery, Stop, and limits.
+- [Codex proposal](docs/research/codex-proposed.md): the delivery journal, request ids, pause-on-Stop, and the depth, fan-out, and rate limits. The final plan takes those guards.

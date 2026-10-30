@@ -1,5 +1,74 @@
 # 01 — Prove the native integration
 
+**Show me — planned slice**
+
+**What the spike hands over.**
+
+```text
+Replayable native experiment
+├── supplied script + editable sample profile inputs
+├── isolated herdr namespace + disposable worktrees
+├── real Claude Code, Codex, and OpenCode 2 panes
+└── docs/spike.md
+    └── exact versions, commands, observations, limits, blockers
+```
+
+**One experiment, from setup to evidence.**
+
+```mermaid
+sequenceDiagram
+    participant Owner
+    participant Spike as Replayable spike script
+    participant Herdr as Isolated herdr
+    participant TUI as Selected native harness
+    Owner->>Spike: Run the delivered experiment recipe
+    Spike->>Spike: Prepare disposable workspace
+    Spike->>Herdr: Create isolated native pane
+    Herdr->>TUI: Start with existing hub login
+    Spike->>Herdr: Exercise discovery, prompting, interrupt, and restore
+    Herdr-->>Spike: Observed state, bounded screen, and session evidence
+    Spike-->>Owner: Pane path + report with expected versus observed
+    Owner-->>Spike: Feedback; repeat the affected experiment
+```
+
+**The compatibility gate is evidence, not an assumption.**
+
+```text
+for each of Claude Code, Codex, OpenCode 2
+  verify profile/repository instructions, skill, MCP, and workspace access
+  try ten reply-stub messages, duplicate, omitted, and quiet-only replies
+  record readiness, environment, dialogs, interrupt, reset, and cold restore
+  compare fresh launch with native resume after instruction edits
+  if a required case fails or has no observation
+    record the exact blocker; stop dependent implementation
+  never infer reply text from a transcript or automatically resend ambiguity
+```
+
+**A small input change exposes stale loaded context.**
+
+```diff
+ # Disposable profile instruction sentinel
+-Report PROFILE_SENTINEL=reviewer-A when asked.
++Report PROFILE_SENTINEL=reviewer-B when asked.
+```
+
+```text
+Fresh launch → observe which sentinel actually loads.
+Native resume → record A, B, or failure; do not assume the edit reloaded.
+Two profiles → compare intended sentinels and inherited global behavior.
+```
+
+**What you can validate before goal 02.**
+
+```text
+Run supplied recipe → open the printed native pane
+Ask for sentinel + skill + MCP → make the sample workspace edit
+Change sentinel → repeat fresh/resumed launch
+Try recorded interrupt key → compare the report with what you saw
+Give feedback on setup, trust, interruption, and update behavior
+Repeat affected case → retain the report and inspectable sample state
+```
+
 **Status:** planned. **Depends on:** none.
 
 ## Outcome
@@ -8,9 +77,10 @@
 
 ## Bounded work
 
-- Run [final stage 0](../plan-final.md#stage-0-spike), excluding its explicitly optional remote-machine check. Capture versions, OS, commands, redacted observations, and pass/fail per case. No cross-platform or historical-version matrix.
+- Run [final stage 0](../research/plan-final.md#stage-0-spike), excluding its explicitly optional remote-machine check. Capture versions, OS, commands, redacted observations, and pass/fail per case. No cross-platform or historical-version matrix.
 - Use a tiny `drovr reply` stub that writes ids/results to a file. Test ten messages per harness, a duplicate call, an omitted reply, and a quiet-only reply. This is disposable compatibility work, not a second service implementation.
 - Record fresh launch/trust/MCP dialogs, instruction and repository-guidance sentinels, skill/MCP discovery, native permission behavior, worktree/extra-directory access, and actual launch-environment presence. Verify edits and Git metadata operations separately; do not promise identical native policies.
+- Record cwd, native config/session homes, credential source, inherited global hooks/memory/settings, and any native writes to generated config. Try two distinct profile sentinels under the existing login. Shared authentication does not prove configuration isolation; do not change global settings to make the check pass.
 - Exercise `/clear` or `/new`, pane move, detach, cold restore, missing/invalid resume, readiness, interrupt keys in working/idle/draft/dialog states, and lost launch responses. Native resume is herdr's job.
 - Measure prompt submission into a nonempty composer and an interrupted acknowledgment. Record the limitation instead of writing a draft-clearing workaround. Verify which event/polling primitive can actually observe output activity and runtime continuity.
 - Record whether profile edits are reloaded on resume. If not, document the fresh-session requirement and the owner action needed; do not claim restart updates model instructions by itself.
@@ -28,6 +98,7 @@ Service scaffolding, production profile APIs, PWA work, remote machines, token b
 - [ ] Supported readiness/output observations, interrupt/dialog sequences, and cold-restore matching are written down for the installed versions.
 - [ ] The lost-acknowledgment case demonstrates why an automatic resend is forbidden, including when prompt text disappears from the visible screen.
 - [ ] The service/herdr environment assumption and resumed-instruction behavior have evidence, not inference from sharing a username.
+- [ ] Two distinct profiles have recorded instruction/tool sentinels, native home locations, inherited global behavior, and any native mutations of generated files. The report distinguishes shared login from configuration isolation.
 - [ ] No missing explicit reply is replaced with transcript extraction. A harness that cannot reliably follow the two-tool skill remains a release blocker.
 - [ ] The final hands-on checkpoint has been tried by the owner and revised for feedback before this goal is marked complete.
 

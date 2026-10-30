@@ -1,5 +1,87 @@
 # 05 — Admit messages through two tools
 
+**Show me — planned slice**
+
+**One admission owner; caller identity comes from the hub context**
+
+```text
+owner shell                         profile pane
+  owner socket context                resolved HERDR_PANE_ID mapping
+                  \                 /
+                   send / reply CLI
+                     shared admission operation
+                       SQLite: messages, rules, lineage, request keys
+                       owner reads: pending, messages, root/pair threads
+ordinary pane / machine prefix / agent alias → not a profile address
+TUI prompt submission → goal 06, outside this slice
+```
+
+**The response waits for storage, never for a model answer**
+
+```mermaid
+sequenceDiagram
+  participant S as Sender
+  participant C as CLI
+  participant A as Admission
+  participant DB as SQLite
+  S->>C: send or reply with payload and request key
+  C->>A: Canonical input and resolved caller identity
+  A->>DB: One transaction: deduplicate, decide, and insert
+  DB-->>A: Durable message id and admission state
+  A-->>C: Original/new id, conflict, or validation error
+  C-->>S: Return immediately after admission
+  Note over A,DB: No herdr prompt and no wait for a reply
+```
+
+**Transaction logic — pseudocode, not a second command path**
+
+```text
+validate static payload shape; resolve caller; canonicalize full input
+transaction:
+  existing sender/request key?
+    same canonical input → return original result, consume no new budget
+    changed canonical input → conflict; create no second message
+  resolve profile target; choose allow decision; compute lineage
+  enforce rendered size, depth, fan-out, pending, and root-rate bounds
+    defaults: 16 KiB, depth 4, 16 child sends, 64 pending, 4 agent roots/hour
+  send → queue, await approval, or persist a well-formed refusal
+  profile reply → require a prior attempt for that exact recipient/message
+    first reply to an original send may reserve one profile-sender wake
+    later reply or reply-to-reply → history only
+  insert row and reserve any eligible wake atomically
+commit; return durable id/state without submitting a prompt
+```
+
+**Concrete identities and decisions stay visible**
+
+```text
+owner send, key=k1, text=A       → message m1
+same sender, key=k1, text=A     → the same m1; no new decision or budget
+same sender, key=k1, text=B     → explicit conflict
+new invocation without a key   → new operation with a generated key
+
+builder → reviewer, no rule    → awaiting owner approval
+owner allows once             → queued; no reusable allow rule
+reviewer replies to attempted send from builder
+  first eligible reply        → one reserved wake for builder
+  a later different reply     → recorded only
+  reply to a reply             → recorded only
+reply to owner/trigger send    → owner result; no dispatcher wake
+quiet reply                   → body may be empty; quiet/choices are exclusive
+choices reply                 → store 2–4 labels; choice UI arrives in goals 08–09
+```
+
+**What the owner can inspect before delivery exists**
+
+```text
+send with a fixed key → repeat → change payload → inspect id/conflict
+send builder → reviewer without a rule → pending → allow once
+read messages/root thread → inspect links, decision, and queued state
+restart drovr → ids, rules, decisions, and queued rows remain
+inspect reviewer's native pane → no queue text was submitted by this goal
+feedback → clarify the mailbox output before adding delivery
+```
+
 **Status:** planned. **Depends on:** [04](goal-04.md).
 
 ## Outcome
@@ -8,7 +90,7 @@
 
 ## Bounded work
 
-- Implement one `send`/`reply` command handler shared by CLI and future HTTP/trigger callers. Use the [final envelope/tools](../plan-final.md#the-two-tools), request keys, JSON response, exit codes, rendered size cap, and [C1–C3](contracts.md#c1-cli-payloads-and-identity).
+- Implement one `send`/`reply` command handler shared by CLI and future HTTP/trigger callers. Use the [final envelope/tools](../research/plan-final.md#the-two-tools), request keys, JSON response, exit codes, rendered size cap, and [C1–C3](contracts.md#c1-cli-payloads-and-identity).
 - Resolve the caller from the pane/profile mapping or owner socket context. Accept profile names only. Unknown well-formed targets persist a refusal; ordinary panes, `@agent:` syntax, and machine prefixes are not addresses.
 - In one SQLite transaction, find duplicate keys, canonicalize input, resolve the target, apply allow/one-time decisions, compute lineage, enforce admission limits, and insert the message. No command constructs its own SQL path around admission.
 - Implement owner `allow once`, `allow always`, `allow refuse`, and rule removal. Record the admitting rule so revocation can hold queued work. A profile cannot approve or list owner pending work.
@@ -37,7 +119,7 @@ No prompt submission, blocking `ask`, inbox/wait protocol, automatic reply relay
 
 ## Try it and give feedback
 
-**You get:** working `send`/`reply`, owner `pending`/`messages` reads, and allow decisions against the real database. Deliver copy-paste commands using the builder/reviewer profiles from goal 04, with fixed request keys. This checkpoint exercises a durable mailbox; messages do not reach a TUI until goal 06.
+**You get:** working `send`/`reply`, owner `pending`/`messages` reads, and allow decisions against the real database. Supply both builder and reviewer disposable profile definitions and their exact setup through the existing profile-file and launch paths; goal 04's single reviewer sample is not a prerequisite for a second sample. Deliver copy-paste commands with fixed request keys. This checkpoint exercises a durable mailbox; messages do not reach a TUI until goal 06.
 
 1. Send an owner message with `--request-id`, repeat the identical command, then repeat that key with changed text. Inspect the stable id and explicit conflict using `drovr messages`.
 2. In builder's native pane, have it run a send to reviewer without an allow rule. As owner, inspect `drovr pending`, allow it once, and observe the row move to queued without creating an always-allow rule.
