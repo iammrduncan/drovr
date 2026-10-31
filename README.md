@@ -15,7 +15,7 @@ Vite, React, and shadcn/ui for the PWA, with the chat built from shadcn's AI Ele
 3. Cross-bot messaging.
 4. A knowledge base.
 
-Later, and not scheduled: self-learning skills, remote computer and agent control through [herdr](https://herdr.dev), library and pages, chat rooms, past sessions, and permissions. One-page stubs are in [docs/phases/](docs/phases/).
+Later, and not scheduled: everything else stubbed in [docs/phases/](docs/phases/), such as tools, MCP, routines, a vault, voice, and remote control through [herdr](https://herdr.dev).
 
 The previous design and spike are in [archive/](archive/README.md). The git host may still use the old repository name until the owner renames it.
 

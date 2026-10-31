@@ -13,7 +13,7 @@ v1 is built. This page describes what exists and records how each part was check
 
 ## Non-goals
 
-Memories, cross-bot messaging, a knowledge base, skills, herdr, worker harnesses, library and pages, chat rooms, past sessions, and permissions. Those stubs are in [docs/phases/](phases/).
+Everything stubbed in [docs/phases/](phases/), such as memories, cross-bot messaging, skills, herdr, permissions, tools, and MCP.
 
 Also out of v1: accounts, Next.js, the Vercel AI SDK, tools, MCP, a transcript database, and Hermes Agent.
 
