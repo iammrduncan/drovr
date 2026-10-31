@@ -1,6 +1,6 @@
 # MVP implementation plan
 
-Build [plan-final.md](../research/plan-final.md), with the ten bounded goals below. The repository currently contains design documents only. Every goal is **planned**, and none of the implementation or live acceptance checks below has run.
+Build [plan-final.md](../research/plan-final.md), with the ten bounded goals below. Goal 01 is **in progress**: disposable compatibility tooling and partial installed-version observations are recorded in [the spike report](../spike.md). Its gates and owner checkpoint remain incomplete. Goals 02–10 are **planned**; no application service or PWA exists.
 
 This directory translates the final design into work. Earlier proposals are historical references, not additional requirements. [Shared contracts](contracts.md) resolve a few contradictions that would otherwise create different implementations of the same feature. They retain profiles-only addressing, two nonblocking agent tools, and one trigger mechanism.
 

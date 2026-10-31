@@ -1,0 +1,12 @@
+# Proposed owner-approved experiment; the driver DOES NOT install this rule.
+# An allow rule runs this exact read-only probe outside Codex's command sandbox.
+# It grants no general Python, shell, filesystem, or network command prefix.
+prefix_rule(
+    pattern = [
+        "/usr/bin/python3",
+        "/root/github/drovr/tools/spike/spike.py",
+        "--root", "/tmp/drovr-g01-live", "socket-probe",
+    ],
+    decision = "allow",
+    justification = "Read-only ping of the isolated spike socket to calibrate the messaging transport",
+)

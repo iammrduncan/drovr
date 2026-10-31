@@ -1,0 +1,137 @@
+#!/usr/bin/env python3
+"""Disposable call recorder; no router, authorization, delivery, or deduplication."""
+
+import argparse
+import fcntl
+import json
+import os
+from pathlib import Path
+import select
+import stat
+import sys
+import time
+import uuid
+
+
+def piped_text(wait):
+    """Bound a sample pipe read; an open tool stdin must never hang a reply."""
+    fd = sys.stdin.fileno()
+    body = bytearray()
+    deadline = time.monotonic() + 2
+    while select.select([fd], [], [], max(0, deadline - time.monotonic()) if wait else 0)[0]:
+        chunk = os.read(fd, 16385 - len(body))
+        if not chunk:
+            return bytes(body)
+        body.extend(chunk)
+        if len(body) > 16384:
+            raise ValueError("stdin exceeds 16 KiB")
+        if not wait:
+            return bytes(body)
+    if wait:
+        raise ValueError("stdin did not close within the spike's 2-second input limit")
+    return bytes(body)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("operation", choices=("send", "reply"))
+    parser.add_argument("target", help="Profile name for send; incoming message id for reply")
+    parser.add_argument("text", nargs="?")
+    parser.add_argument("--quiet", action="store_true")
+    parser.add_argument("--request-id")
+    parser.add_argument("--text-file", type=Path)
+    args = parser.parse_args()
+    if args.quiet and args.operation != "reply":
+        parser.error("--quiet is reply-only")
+
+    text = args.text
+    has_explicit_body = text is not None or args.text_file is not None
+    if args.text_file is not None:
+        if text is not None:
+            parser.error("choose one text source")
+        try:
+            fd = os.open(args.text_file, os.O_RDONLY | os.O_NONBLOCK)
+            with os.fdopen(fd, "rb") as stream:
+                if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                    parser.error("--text-file must be a regular sample file")
+                body = stream.read(16385)
+            text = body.decode("utf-8")
+        except (OSError, UnicodeError):
+            parser.error("cannot read UTF-8 --text-file")
+    if not sys.stdin.isatty():
+        try:
+            # Explicit bodies and empty quiet replies do not wait for tool stdin.
+            ready = bool(select.select([sys.stdin], [], [], 0)[0])
+            body = piped_text(wait=not has_explicit_body and (not args.quiet or ready))
+        except ValueError as error:
+            print(str(error), file=sys.stderr)
+            return 4
+        if body:
+            if has_explicit_body:
+                parser.error("choose one text source")
+            try:
+                text = body.decode("utf-8")
+            except UnicodeError:
+                parser.error("stdin must be UTF-8")
+    text = text or ""
+    if not text.strip() and not args.quiet:
+        print("empty text (except reply --quiet)", file=sys.stderr)
+        return 4
+    if len(text.encode("utf-8")) > 16384:
+        print("spike text exceeds 16 KiB; nothing recorded", file=sys.stderr)
+        return 4
+    profile = os.environ.get("DROVR_SPIKE_PROFILE")
+    path = Path(os.environ.get("DROVR_SPIKE_RESULTS", ""))
+    if "DROVR_SPIKE_RESULTS" not in os.environ:
+        # Fixture calibration: some native shells filter custom environment names.
+        # Read only this cwd's bounded marker; never discover config in a parent.
+        try:
+            fd = os.open(Path.cwd() / ".drovr-spike.json", os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+            with os.fdopen(fd, "rb") as stream:
+                if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                    raise ValueError()
+                data = stream.read(4097)
+                if len(data) > 4096:
+                    raise ValueError()
+                marker = json.loads(data)
+            path = Path(marker["results"])
+            profile = marker["profile"]
+            if path != Path.cwd() / "results.jsonl" or not isinstance(profile, str) or len(profile) > 64:
+                raise ValueError()
+        except (OSError, ValueError, KeyError, TypeError):
+            parser.error("missing DROVR_SPIKE_RESULTS and invalid/missing cwd .drovr-spike.json fixture marker")
+    if not path.is_absolute():
+        parser.error("DROVR_SPIKE_RESULTS must name an absolute sample-results path")
+    row = {
+        "id": "spike-" + uuid.uuid4().hex[:12],
+        "at": time.time(),
+        "operation": args.operation,
+        "target": args.target,
+        "text": text,
+        "quiet": args.quiet,
+        "request_id": args.request_id,
+        "profile": profile,
+        "pane_id": os.environ.get("HERDR_PANE_ID"),
+    }
+    encoded = (json.dumps(row, ensure_ascii=False) + "\n").encode("utf-8")
+    try:
+        # Every invocation, including a duplicate key, is evidence. There is no wake.
+        fd = os.open(path, os.O_WRONLY | os.O_APPEND | os.O_CREAT | os.O_NOFOLLOW | os.O_NONBLOCK, 0o600)
+        with os.fdopen(fd, "ab", buffering=0) as stream:
+            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                print("DROVR_SPIKE_RESULTS must be a regular sample file", file=sys.stderr)
+                return 4
+            fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            if os.fstat(stream.fileno()).st_size + len(encoded) > 1024 * 1024:
+                print("spike results reached 1 MiB; use a new experiment path", file=sys.stderr)
+                return 4
+            stream.write(encoded)
+    except OSError:
+        print("cannot append to DROVR_SPIKE_RESULTS; nothing acknowledged", file=sys.stderr)
+        return 4
+    print(json.dumps({"id": row["id"], "status": "spike-call-recorded", "quiet": args.quiet}))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -50,7 +50,9 @@ Preserve the five-second output debounce. It is an activity heuristic, not proof
 
 Close a submitted attempt only against a comparable baseline on its matched runtime, using the final plan's later ready-state observation. `closed` means the delivery slot became ready again, not that an answer was written or a task succeeded. A session reset alone is not completion. Across a cold restore or an observation gap that prevents continuity validation, hold recovery rather than comparing unrelated sequence numbers, silently closing, or resending. Persist the smallest baseline/continuity marker needed, not a runtime event log.
 
-Use a bounded visible screen read for dialogs. A specialized key action revalidates the target and current dialog; stale/unknown cards open the pane without sending an answer. Installed-version native permission and interrupt behavior is verified, not inferred from a common permission label.
+Use a bounded visible screen read for dialogs. Goal 01 observed native `idle`/readiness behind startup and approval overlays, so pre-write validation must also hold a prompt on a known overlay or an unclassified ready view; readiness alone does not authorize typing. This reuses the pinned native dialog surface, not transcript routing, and does not prove the composer is empty. A specialized key action revalidates the target and current dialog; stale/unknown cards open the pane without sending an answer. Installed-version native permission and interrupt behavior is verified, not inferred from a common permission label.
+
+Matching a native session id is not proof of available conversation history: the tested OpenCode can create a missing id on native resume. Preserve the cold/gap recovery rule above and surface an uncertain fresh/resume outcome for owner reconciliation; never infer continued context from that id alone.
 
 ## C6. Limits, Stop, and recovery stay durable
 

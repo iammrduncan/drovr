@@ -10,7 +10,7 @@ Separate observed facts, intended behavior, and hypotheses. State what you canno
 
 The [implementation index](docs/plan/README.md) bounds execution of the [final plan](docs/research/plan-final.md). [Contracts C1–C8](docs/plan/contracts.md) resolve the identified ambiguities; [profiles.md](docs/plan/profiles.md) defines the saved/applied/live lifecycle. Read the active goal for its acceptance and handoff. Earlier research is historical context. If these sources still disagree on a material behavior, identify the exact conflict and continue independent work without inventing a policy.
 
-The repository currently has design documents and local skills, with no application manifest, implementation, test runner configuration, or CI workflow. Keep planned architecture separate from current enforcement. When implementation arrives, revise factual instructions from the actual scripts and code.
+The repository currently has design documents, local skills, and disposable goal 01 compatibility tooling under `tools/spike/`, with no application manifest, service implementation, test runner configuration, or CI workflow. Keep planned architecture separate from current enforcement. When implementation arrives, revise factual instructions from the actual scripts and code.
 
 ## The ladder
 

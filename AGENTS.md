@@ -4,7 +4,7 @@ Read [CONVENTIONS.md](CONVENTIONS.md) before changing plans or code. It applies 
 
 ## Start with the actual state
 
-Drovr is currently a design-only repository. There is no service, PWA, `package.json`, application test suite, or CI workflow yet. Diagrams, component/function sketches, and npm commands in the plans describe future deliverables. Do not report them as existing behavior or passing checks. Update this paragraph and the working commands when implementation changes those facts.
+Drovr currently has design documents and disposable goal 01 compatibility tooling under `tools/spike/`. There is no service, PWA, `package.json`, application test suite, or CI workflow yet. Diagrams, component/function sketches, and npm commands in the plans describe future deliverables. Do not report them as existing behavior or passing checks. Update this paragraph and the working commands when implementation changes those facts.
 
 Read only the material needed for the task, in this order:
 
@@ -44,3 +44,5 @@ Other research and earlier proposals are context, not cumulative requirements. S
 From the repository root, `git diff --check` currently checks whitespace in tracked changes. Inspect new files and verify their local links/imports separately; untracked files are not covered by that diff.
 
 Application install/check/test/build/start commands are goal 02 deliverables, not available commands today. Once code exists, read the actual manifest/scripts and document their working directories and coverage here. Ordinary tests use disposable state and a controllable herdr boundary; live compatibility checks use an isolated namespace and must not launch paid sessions or stop the owner's fleet as part of normal tests.
+
+From the repository root, `python3 tools/spike/spike.py --help` describes the goal 01 driver. [Its README](tools/spike/README.md) supplies the explicit live experiment commands; they launch native TUIs and are not ordinary tests. [The spike report](docs/spike.md) records observed versions, failures, and outstanding gates.
