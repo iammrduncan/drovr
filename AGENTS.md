@@ -8,7 +8,7 @@ Read [CONVENTIONS.md](CONVENTIONS.md) before changing code. Current product scop
 
 fxbot is a small PWA and one Node server that runs [libfx](https://fx.sh/docs/lib). v1 is bot profiles and the chat UI. There is no application code, `package.json`, test suite, or CI yet. Plans describe future work. Do not report them as running behavior.
 
-Later ideas live as stubs in [docs/phases/](docs/phases/). Do not build them during v1: memories, cross-bot messaging, a knowledge base, skills, remote computer and agent control, library and pages, chat rooms, and past sessions.
+Later ideas live as stubs in [docs/phases/](docs/phases/). Do not build them during v1: memories, cross-bot messaging, a knowledge base, skills, remote computer and agent control, library and pages, chat rooms, past sessions, and permissions.
 
 ## Rules
 

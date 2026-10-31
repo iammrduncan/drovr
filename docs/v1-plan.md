@@ -13,7 +13,7 @@ This is a plan. None of the app described here exists yet.
 
 ## Non-goals
 
-Memories, cross-bot messaging, a knowledge base, skills, herdr, worker harnesses, library and pages, chat rooms, and past sessions. Those stubs are in [docs/phases/](phases/).
+Memories, cross-bot messaging, a knowledge base, skills, herdr, worker harnesses, library and pages, chat rooms, past sessions, and permissions. Those stubs are in [docs/phases/](phases/).
 
 Also out of v1: accounts, Next.js, the Vercel AI SDK, tools, MCP, a transcript database, and Hermes Agent.
 

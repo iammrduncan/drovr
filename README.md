@@ -15,7 +15,7 @@ Vite, React, and shadcn/ui for the PWA. A tiny Node server for profiles and libf
 3. Cross-bot messaging.
 4. A knowledge base.
 
-Later, and not scheduled: self-learning skills, remote computer and agent control through [herdr](https://herdr.dev), library and pages, chat rooms, and past sessions. One-page stubs are in [docs/phases/](docs/phases/).
+Later, and not scheduled: self-learning skills, remote computer and agent control through [herdr](https://herdr.dev), library and pages, chat rooms, past sessions, and permissions. One-page stubs are in [docs/phases/](docs/phases/).
 
 The previous design and spike are in [archive/](archive/README.md). The git host may still use the old repository name until the owner renames it.
 
