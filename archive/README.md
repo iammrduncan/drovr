@@ -1,0 +1,1 @@
+This folder is the superseded drovr-era design and spike, kept for reference. The plans, research notes, spike report, and spike driver were moved here unchanged when the project became fxbot. Nothing in this folder is the current plan.
